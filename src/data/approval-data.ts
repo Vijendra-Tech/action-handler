@@ -1,5 +1,5 @@
 export const approvalData = {
-  initialState: "Unlocked",
+  initialState: "Rejected",
   states: {
     Unlocked: {
       components: [
@@ -21,5 +21,34 @@ export const approvalData = {
         },
       ],
     },
+    Rejected: {
+      components: [
+        {
+          name: "tableCell",
+          roles: ["editor", "admin"],
+          cellId: "Alok-09/03/2015",
+          props: {
+            enabled: true,
+            employeeDetails: {
+              name: "Alok",
+              timeSlot: "9:00am- 5pm"
+            }
+          }
+        },
+        {
+          name: "tableCell",
+          roles: ["editor", "admin"],
+          cellId: "Ram-10/03/2015",
+          props: {
+            enabled: true,
+            employeeDetails: {
+              name: "Ram",
+              timeSlot: "10am-3pm",
+              comments: "Rejected: Schedule conflict"
+            }
+          }
+        }
+      ]
+    }
   },
 };

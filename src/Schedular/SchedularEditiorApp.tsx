@@ -1,6 +1,7 @@
 import * as React from "react";
 import { FlowServiceResponseHandler } from "../approverhandler/FlowServiceResponseHandler";
 import { approvalData } from "../data/approval-data";
+import { ScheduleGrid } from "../approverhandler/components/ScheduleGrid";
 
 interface SchedularEditiorAppProps {
   approvals?: any[];
@@ -21,17 +22,18 @@ export class SchedularEditiorApp extends React.PureComponent<SchedularEditiorApp
 
     componentDidMount() {
         FlowServiceResponseHandler.initiaApprovals();
-        const { state, editSchedule, submitforApprovalButton } = FlowServiceResponseHandler.processData(approvalData);
+        const { state, editSchedule, submitforApprovalButton, tableCells } = FlowServiceResponseHandler.processData(approvalData);
         console.log('Current State:', state);
         console.log('Edit Schedule Component:', editSchedule);
         console.log('Submit for Approval Button:', submitforApprovalButton);
+        console.log('Table Cells:', tableCells);
     }
 
     handleSubmitForApproval = async () => {
         this.setState({ isSubmitting: true });
         try {
             const payload = {
-                scheduleId: 123, // Example ID
+                scheduleId: 123,
                 status: 'pending_approval'
             };
             
@@ -51,15 +53,17 @@ export class SchedularEditiorApp extends React.PureComponent<SchedularEditiorApp
     render() {
         const { approvals, status } = this.props;
         const { isSubmitting } = this.state;
-        const { state, editSchedule, submitforApprovalButton } = FlowServiceResponseHandler.processData(approvalData);
+        const { state, editSchedule, submitforApprovalButton, tableCells } = FlowServiceResponseHandler.processData(approvalData);
         
+        console.log('Rendering with tableCells:', tableCells); // Debug log
+
         return (
             <div>
                 <h1>Schedular Editor</h1>
                 <p>Status: {status}</p>
                 <p>Approvals: {approvals?.length ?? 0}</p>
                 <p>Current State: {state}</p>
-                <div>
+                <div className="actions" style={{ marginBottom: '20px' }}>
                     {editSchedule && editSchedule.roles.includes("editor") && (
                         <button disabled={!editSchedule.props.enabled}>
                             Edit Schedule
@@ -72,6 +76,13 @@ export class SchedularEditiorApp extends React.PureComponent<SchedularEditiorApp
                         >
                             {isSubmitting ? 'Submitting...' : 'Submit for Approval'}
                         </button>
+                    )}
+                </div>
+                <div style={{ border: '1px solid #ccc', padding: '16px', margin: '16px 0' }}>
+                    {tableCells ? (
+                        <ScheduleGrid cells={tableCells} />
+                    ) : (
+                        <p>No schedule data available</p>
                     )}
                 </div>
             </div>

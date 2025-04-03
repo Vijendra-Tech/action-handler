@@ -11,8 +11,11 @@ interface ApprovalDataType {
       components: Array<{
         name: string;
         roles: string[];
+        cellId?: string;
         props: {
           enabled: boolean;
+          color?: string;
+          icon?: string;
           [key: string]: any;
         };
       }>;
@@ -23,8 +26,11 @@ interface ApprovalDataType {
 interface ComponentData {
   name: string;
   roles: string[];
+  cellId?: string;
   props: {
     enabled: boolean;
+    color?: string;
+    icon?: string;
     [key: string]: any;
   };
 }
@@ -33,6 +39,7 @@ interface ProcessedData {
   state: string;
   editSchedule: ComponentData | null;
   submitforApprovalButton: ComponentData | null;
+  tableCells: { [key: string]: ComponentData } | null;
 }
 
 export class FlowServiceResponseHandler {
@@ -63,16 +70,25 @@ export class FlowServiceResponseHandler {
       state: currentState,
       editSchedule: null,
       submitforApprovalButton: null,
+      tableCells: null
     };
 
     if (stateData && stateData.components) {
+      const cells: { [key: string]: ComponentData } = {};
+
       stateData.components.forEach((comp: ComponentData) => {
         if (comp.name === "editSchedule") {
           result.editSchedule = comp;
         } else if (comp.name === "submitforApprovalButton") {
           result.submitforApprovalButton = comp;
+        } else if (comp.name === "tableCell" && comp.cellId) {
+          cells[comp.cellId] = comp;
         }
       });
+
+      if (Object.keys(cells).length > 0) {
+        result.tableCells = cells;
+      }
     }
 
     return result;
