@@ -32,90 +32,136 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backgroundColor: 'rgba(0, 0, 0, 0.75)',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       zIndex: 1000
     }}>
       <div style={{
-        backgroundColor: '#fff',
-        padding: '20px',
+        width: '800px',
+        height: '600px',
+        backgroundColor: '#1a1a1a',
         borderRadius: '8px',
-        width: '400px',
-        maxHeight: '80vh',
+        border: '1px solid #646cff',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        overflow: 'hidden'
       }}>
-        <h3 style={{ color: '#333', marginTop: 0 }}>Comments</h3>
-        
         <div style={{
-          maxHeight: '300px',
-          overflowY: 'auto',
-          marginBottom: '20px'
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '16px',
+          borderBottom: '1px solid #646cff'
         }}>
-          {comments.length > 0 ? (
-            comments.map((comment, index) => (
-              <div key={index} style={{
-                padding: '8px',
-                borderBottom: '1px solid #eee',
-                color: '#333'
-              }}>
-                {comment}
-              </div>
-            ))
-          ) : (
-            <p style={{ color: '#666' }}>No comments yet</p>
-          )}
+          <h2 style={{ 
+            margin: 0, 
+            color: '#fff',
+            fontSize: '1.5rem'
+          }}>
+            Comments
+          </h2>
+          <button
+            onClick={onClose}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: 'transparent',
+              border: '1px solid #646cff',
+              color: '#646cff',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '0.9rem'
+            }}
+          >
+            Close
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} style={{
+        <div style={{
           display: 'flex',
-          flexDirection: 'column',
-          gap: '10px'
+          flex: 1,
+          overflow: 'hidden'
         }}>
-          <textarea
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Add a comment..."
-            style={{
-              padding: '8px',
-              borderRadius: '4px',
-              border: '1px solid #ccc',
-              minHeight: '80px',
-              color: '#333'
-            }}
-          />
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-            <button
-              type="button"
-              onClick={onClose}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '4px',
-                border: '1px solid #ccc',
-                backgroundColor: '#fff',
-                color: '#333',
-                cursor: 'pointer'
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              style={{
-                padding: '8px 16px',
-                borderRadius: '4px',
-                border: 'none',
-                backgroundColor: '#646cff',
-                color: '#fff',
-                cursor: 'pointer'
-              }}
-            >
-              Add Comment
-            </button>
+          {/* Left side - Comments list */}
+          <div style={{
+            flex: 1,
+            padding: '16px',
+            overflowY: 'auto',
+            borderRight: '1px solid #646cff'
+          }}>
+            {comments.map((comment, index) => (
+              <div
+                key={index}
+                style={{
+                  backgroundColor: '#2a2a2a',
+                  padding: '12px',
+                  marginBottom: '12px',
+                  borderRadius: '6px',
+                  border: '1px solid #646cff',
+                  color: '#fff'
+                }}
+              >
+                <div style={{
+                  fontSize: '0.9rem',
+                  marginBottom: '4px',
+                  color: '#646cff'
+                }}>
+                  {index % 2 === 0 ? 'Rejection message' : 'Your message'} #{Math.floor(index/2) + 1}
+                </div>
+                {comment}
+              </div>
+            ))}
           </div>
-        </form>
+
+          {/* Right side - Add comment form */}
+          <div style={{
+            flex: 1,
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <form onSubmit={handleSubmit} style={{ height: '100%' }}>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%'
+              }}>
+                <textarea
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  placeholder="Add a comment ...."
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    backgroundColor: '#2a2a2a',
+                    border: '1px solid #646cff',
+                    borderRadius: '6px',
+                    color: '#fff',
+                    fontSize: '1rem',
+                    resize: 'none',
+                    marginBottom: '16px'
+                  }}
+                />
+                <button
+                  type="submit"
+                  style={{
+                    padding: '12px',
+                    backgroundColor: '#646cff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    alignSelf: 'flex-end'
+                  }}
+                >
+                  Add Comment
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   );

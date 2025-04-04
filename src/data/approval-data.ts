@@ -8,7 +8,6 @@ export const approvalData = {
           roles: ["editor", "admin"],
           props: {
             enabled: true,
-            //other attribute
           },
         },
         {
@@ -16,7 +15,6 @@ export const approvalData = {
           roles: ["editor", "admin"],   
           props: {
             enabled: true,
-            //other attribute
           },
         },
       ],
@@ -31,7 +29,8 @@ export const approvalData = {
             enabled: true,
             employeeDetails: {
               name: "Alok",
-              timeSlot: "9:00am- 5pm"
+              timeSlot: "9:00 AM - 5:00 PM",
+              comments: "Schedule needs approval"
             }
           }
         },
@@ -43,12 +42,25 @@ export const approvalData = {
             enabled: true,
             employeeDetails: {
               name: "Ram",
-              timeSlot: "10am-3pm",
-              comments: "Rejected: Schedule conflict"
+              timeSlot: "10:00 AM - 6:00 PM",
+              comments: "Overtime request pending"
+            }
+          }
+        },
+        {
+          name: "tableCell",
+          roles: ["editor", "admin"],
+          cellId: "Prem-11/03/2015",
+          props: {
+            enabled: true,
+            employeeDetails: {
+              name: "Prem",
+              timeSlot: "8:00 AM - 4:00 PM",
+              comments: "Early shift requested"
             }
           }
         }
-      ]
-    }
+      ],
+    },
   },
 };
