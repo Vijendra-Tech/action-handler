@@ -24,9 +24,6 @@ export const TableCell: React.FC<TableCellProps> = ({
 }) => {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
-  const [comments, setComments] = useState<string[]>(
-    employeeDetails?.comments ? [employeeDetails.comments] : []
-  );
   
   if (!employeeDetails?.timeSlot) return null;
 
@@ -46,10 +43,6 @@ export const TableCell: React.FC<TableCellProps> = ({
 
   const handleCloseModal = () => {
     setIsCommentsModalOpen(false);
-  };
-
-  const handleAddNewComment = (comment: string) => {
-    setComments([...comments, comment]);
   };
 
   return (
@@ -82,8 +75,8 @@ export const TableCell: React.FC<TableCellProps> = ({
       <CommentsModal
         isOpen={isCommentsModalOpen}
         onClose={handleCloseModal}
-        comments={comments}
-        onAddComment={handleAddNewComment}
+        cellId={cellId}
+        userId="current-user" // In a real app, this would come from auth context
       />
     </div>
   );

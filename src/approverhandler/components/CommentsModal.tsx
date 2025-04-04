@@ -1,29 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { FlowServiceResponseHandler } from '../FlowServiceResponseHandler';
+
+interface Comment {
+  id: string;
+  text: string;
+  userId: string;
+  timestamp: string;
+  type: 'rejection' | 'response';
+}
 
 interface CommentsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  comments: string[];
-  onAddComment: (comment: string) => void;
+  cellId: string;
+  userId: string;
 }
 
 export const CommentsModal: React.FC<CommentsModalProps> = ({
   isOpen,
   onClose,
-  comments,
-  onAddComment
+  cellId,
+  userId
 }) => {
   const [newComment, setNewComment] = useState('');
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const flowService = new FlowServiceResponseHandler();
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (isOpen) {
+      fetchComments();
+    }
+  }, [isOpen, cellId]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newComment.trim()) {
-      onAddComment(newComment.trim());
-      setNewComment('');
+  const fetchComments = async () => {
+    try {
+      setIsLoading(true);
+      const response = await flowService.executeApi("fetch-comments", { cellId });
+      setComments(response.content[0].text);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newComment.trim()) {
+      try {
+        setIsLoading(true);
+        await flowService.executeApi("add-comment", {
+          cellId,
+          comment: newComment.trim(),
+          userId
+        });
+        
+        // Refresh comments after adding new one
+        await fetchComments();
+        setNewComment('');
+      } catch (error) {
+        console.error('Error adding comment:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  if (!isOpen) return null;
 
   return (
     <div style={{
@@ -60,7 +104,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
             color: '#fff',
             fontSize: '1.5rem'
           }}>
-            Comments
+            Comments {isLoading && '(Loading...)'}
           </h2>
           <button
             onClick={onClose}
@@ -90,9 +134,9 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
             overflowY: 'auto',
             borderRight: '1px solid #646cff'
           }}>
-            {comments.map((comment, index) => (
+            {comments.map((comment) => (
               <div
-                key={index}
+                key={comment.id}
                 style={{
                   backgroundColor: '#2a2a2a',
                   padding: '12px',
@@ -105,11 +149,11 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                 <div style={{
                   fontSize: '0.9rem',
                   marginBottom: '4px',
-                  color: '#646cff'
+                  color: comment.type === 'rejection' ? '#ff4646' : '#646cff'
                 }}>
-                  {index % 2 === 0 ? 'Rejection message' : 'Your message'} #{Math.floor(index/2) + 1}
+                  {comment.type === 'rejection' ? 'Rejection message' : 'Your message'} - {new Date(comment.timestamp).toLocaleString()}
                 </div>
-                {comment}
+                {comment.text}
               </div>
             ))}
           </div>
@@ -131,6 +175,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Add a comment ...."
+                  disabled={isLoading}
                   style={{
                     flex: 1,
                     padding: '12px',
@@ -145,18 +190,20 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                 />
                 <button
                   type="submit"
+                  disabled={isLoading}
                   style={{
                     padding: '12px',
                     backgroundColor: '#646cff',
                     border: 'none',
                     borderRadius: '6px',
                     color: '#fff',
-                    cursor: 'pointer',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
                     fontSize: '1rem',
-                    alignSelf: 'flex-end'
+                    alignSelf: 'flex-end',
+                    opacity: isLoading ? 0.7 : 1
                   }}
                 >
-                  Add Comment
+                  {isLoading ? 'Adding...' : 'Add Comment'}
                 </button>
               </div>
             </form>
